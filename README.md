@@ -1,12 +1,12 @@
-# FundX: Bridging Traditional Finance and Blockchain
+# Safiri: Bridging Traditional Finance and Blockchain
 
-FundX aims to bridge the gap between traditional financial systems and blockchain by implementing **USSD-based blockchain interactions** and enabling **seamless international fiat transactions**.
+Safiri aims to bridge the gap between traditional financial systems and blockchain by implementing **USSD-based blockchain interactions** and enabling **seamless international fiat transactions**.
 
-Financial inclusion remains a significant challenge in many regions, especially where smartphone and internet penetration is low. Additionally, international payments are slow, costly, and reliant on intermediaries. FundX addresses these issues by:
+Financial inclusion remains a significant challenge in many regions, especially where smartphone and internet penetration is low. Additionally, international payments are slow, costly, and reliant on intermediaries. Safiri addresses these issues by:
 
 - Enabling **USSD-based interactions** with blockchain for users without internet access.
 - Enabling **international fiat transfers** over the blockchain, allowing users to send funds (e.g., Naira) to recipients in other countries (e.g., Ghana), with the recipient receiving their **local currency** (e.g., Ghanaian Cedi) directly **without an intermediary platform or crypto conversion**.
-- Allowing users with **crypto assets** to seamlessly convert them into fiat (native currency) within the FundX ecosystem.
+- Allowing users with **crypto assets** to seamlessly convert them into fiat (native currency) within the Safiri ecosystem.
 
 ## Problem Statement
 
@@ -33,20 +33,20 @@ Financial inclusion remains a significant challenge in many regions, especially 
 2. **Backend (Smart Contracts & Payment Rails):** Executes transactions, maintains liquidity, and ensures compliance.  
 3. **Ensuring continuous availability of USSD services.**  
 
-FundX aims to **democratize blockchain access via USSD** while simplifying international fiat transactions. By leveraging **smart contracts** and **financial partnerships**, we provide a **scalable and secure solution** for seamless payments and crypto-to-fiat conversions.
+Safiri aims to **democratize blockchain access via USSD** while simplifying international fiat transactions. By leveraging **smart contracts** and **financial partnerships**, we provide a **scalable and secure solution** for seamless payments and crypto-to-fiat conversions.
 
-## Running the FundX Project
+## Running the Safiri Project
 **prerequisites**
 - Ensure you have the following installed on your system<br>
 **Docker**<br>
 **Docker Compose (if not included with Docker)**<br>
 **Latest version of node**
 
-### 1. Clone the Repository and navigate to FundX dir
+### 1. Clone the Repository and navigate to Safiri dir
 ```bash
 cd ~
-git clone https://github.com/shaaibu7/FundX.git
-cd FundX
+git clone https://github.com/blockfuselabs/safiri-evm.git
+cd safiri-evm
 ```
 ### 2.Start Up Docker
 ```bash
@@ -71,7 +71,7 @@ docker compose up
 ```bash
 npm run start
 ```
-Now you're ready to start building with FundX. Next is to Create an Account with Africa's Talking[create an account](https://account.africastalking.com/auth/login?next=%2F)
+Now you're ready to start building with safiri-evm. Next is to Create an Account with Africa's Talking[create an account](https://account.africastalking.com/auth/login?next=%2F)
 
 
 ### Africa's Talking APIs for USSD Integration
