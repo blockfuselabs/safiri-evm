@@ -560,11 +560,12 @@ async function getListOfAllBanks() {
 async function ValidateUserAccountDetails(accountNumber, bankCode) {
   const url = `https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`;
 
+
   try {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        Authorization: process.SECRET_KEY,
+        Authorization: process.env.SECRET_KEY,
         'Content-Type': 'application/json'
       }
     });
