@@ -38,7 +38,9 @@ module.exports = (sequelize, DataTypes) => {
     pin: DataTypes.INTEGER,
     status: DataTypes.BOOLEAN,
     createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE
+    updatedAt: DataTypes.DATE,
+    bankCode: DataTypes.STRING,
+    accountNumber: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'User',
