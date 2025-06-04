@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: DataTypes.DATE,
     bankCode: DataTypes.STRING,
     accountNumber: DataTypes.STRING,
+    accountName: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',
