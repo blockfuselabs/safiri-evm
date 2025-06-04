@@ -43,6 +43,7 @@ const USDT_CONTRACT_ADDRESS = process.env.USDT_CONTRACT_ADDRESS;
 // uSER dETAILS TO SAVE to db
 let userbankAccounttoStore;
 let userbankCodetoStore;
+let userbankAccountName;
 const ussdAccess = async (req, res) => {
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
 
@@ -207,6 +208,7 @@ const ussdAccess = async (req, res) => {
                             let userAccountName = result.data.account_name;
                             let userAccountNumber = result.data.account_number;
                             userbankAccounttoStore = userAccountNumber;
+                            userbankAccountName = userAccountName;
                             response = `CON Please Confirm your  Details\n 
                             Name:\b
                             ${userAccountName}\b
@@ -300,7 +302,8 @@ const ussdAccess = async (req, res) => {
                                 pin: passcode,
                                 status: true,
                                 bankCode: userbankCodetoStore,
-                                accountNumber: userbankAccounttoStore
+                                accountNumber: userbankAccounttoStore,
+                                accountName: userbankAccountName
                             });
 
                             sendSMS(phoneNumber, messages.accountCreated(walletAddress))
@@ -333,6 +336,7 @@ const ussdAccess = async (req, res) => {
                      if(result.status){
                             let userAccountName = result.data.account_name;
                             let userAccountNumber = result.data.account_number;
+                            userbankAccountName = userAccountName;
                             response = `CON Confirm Account Details \n Name: ${userAccountName} \n Account Number: ${userAccountNumber}
                              1.Confirm \n2.  Re-enter details
                             `
@@ -391,7 +395,8 @@ const ussdAccess = async (req, res) => {
                                 pin: passcode,
                                 status: true,
                                 bankCode: userbankCodetoStore,
-                                accountNumber: userbankAccounttoStore
+                                accountNumber: userbankAccounttoStore,
+                                accountName:userbankAccountName
                             });
 
                             sendSMS(phoneNumber, messages.accountCreated(walletAddress))
