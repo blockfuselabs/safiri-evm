@@ -1,5 +1,5 @@
 const { User } = require('../models');
-
+const { v4: uuid } = require('uuid');
 //====generating safiri user logic start from here===//
 function sanitizeName(name) {
     return name

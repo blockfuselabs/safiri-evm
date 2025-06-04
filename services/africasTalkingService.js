@@ -1,4 +1,5 @@
 require("dotenv").config();
+const https = require('https');
 
 const {splitPK, encryptKey, decryptKey} = require("../utils/tool")
 const africaStalkingData = require("africastalking");
@@ -8,7 +9,6 @@ const { Op } = require('sequelize');
 
 
 const fs = require('fs');
-const { v4: uuid } = require('uuid');
 const { sendSMS, messages } = require('./smsService');
 const generateSafiriUsername  = require('../utils/usernameGeneration');
 
@@ -32,12 +32,25 @@ const ethProvider = new ethers.JsonRpcProvider(provider);
 const USDT_CONTRACT_ADDRESS = process.env.USDT_CONTRACT_ADDRESS;
 
 
+  const pageBanks = [
+                                { name: "Access Bank", code: "044" },
+                                { name: "UBA", code: "033" },
+                                { name: "OPay", code: "999992" },
+                                { name: "First Bank", code: "011" },
+                                { name: "Moniepoint", code: "50515" },
+                    ];
+
+// uSER dETAILS TO SAVE to db
+let userbankAccounttoStore;
+let userbankCodetoStore;
 const ussdAccess = async (req, res) => {
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
 
     let response; 
     let fullName = '';
     let passcode = '';
+    let userBankChoice = '';
+   
     
     if(text == ''){
         response = 'CON Welcome to Safiri Wallet \n 1. Create an account \n 2. Check wallet balance \n 3. Transfer'
@@ -118,7 +131,119 @@ const ussdAccess = async (req, res) => {
                     if(!fullName || !phoneNumber || !passcode) {
                         response = 'END Incomplete signup details'
                     }
+                  
+                    response = "CON Select Your Bank\n"
+                    // Display all banks in the array 
+                    pageBanks.forEach((element, index) => {
+                      response +=`${index + 1 }. ${element.name}\n`
+                        
+                    });
+                    response+=`6. Search bank`
+                } 
+            }
 
+            if(array.length == 4 ){
+                if(parseInt(array[0]) == 1){
+                    userBankChoice = array[3]
+                    console.log(userBankChoice)
+                    if (userBankChoice >=1 && userBankChoice <=5){
+                        //GET BANK CODE AND THEN VALIDATE ACCOUNT
+                        response = "CON Enter Account Number"
+                    }
+                    else if(userBankChoice == 6){
+
+                        response = "CON Enter the first 3 letters of the Bank Name" 
+                    }
+                    else{
+                        response = "END INvalid Input"
+                    }
+                }
+            }
+            if(array.length == 5 && array[3] !== '6'){
+                if(parseInt(array[0]) == 1){
+                    
+                    // Store both usercode and bankaccount temporally
+                    userBankChoice = array[3]
+                    userAccountNumber = array[4]
+                    let userbankCode = pageBanks[userBankChoice -1].code;
+                    userbankCodetoStore = userbankCode;
+                   
+                    if( userAccountNumber.length !== 10 ||  isNaN(userAccountNumber.length)){
+                        response = "END Invalid Account Number. It must be exactly 10 digits. Try again:";
+                    }
+                    else {
+                        // validate account
+                        try {
+                            
+                        let result = await ValidateUserAccountDetails(userAccountNumber, userbankCode)
+
+                        if(result.status){
+                            let userAccountName = result.data.account_name;
+                            let userAccountNumber = result.data.account_number;
+                            userbankAccounttoStore = userAccountNumber;
+                            response = `CON Please Confirm your  Details\n 
+                            Name:\b
+                            ${userAccountName}\b
+
+                            Account Number:
+                            ${userAccountNumber}\b
+                            1.Confirm \n2.  Re-enter details`
+                        }else{
+                             response = "END Incorrect account Number"
+                        }
+                        
+                        console.log("i am the error 00", result)
+                        } catch (error) {
+                           
+                            console.log("Error", error)
+                            throw error
+                          
+                            
+                        }
+
+                      
+                    }
+                }
+            }
+
+            
+
+            if(array.length == 5 && array[3] == '6'){
+                if(parseInt(array[0]) == 1){
+                let bankInitials = array[4]
+                let allbanks = await getListOfAllBanks()
+                let results = allbanks.filter((bank)=> bank.name.toLowerCase().startsWith(bankInitials.toLowerCase()));
+                console.log("gggg", results)
+                if (Array.isArray(results) && results.length === 0){
+
+                response =`END Bank(s) with  this ${bankInitials} intials does not exit`
+
+               
+                }
+                else{
+                     response = "CON Select your bank\n"
+                    results.forEach((bank, index)=>{
+                    response+=`${index + 1}.  ${bank.name}\n`
+                })
+                }
+    
+            }
+        }
+        console.log("Value ", array[5])
+        console.log("User", array[4])
+        if(array.length == 6 && array[3] !== 6 && array[5] == '1')
+        {
+                    fullName = array[1]
+                    passcode = array[2]
+
+
+                     if(!userbankAccounttoStore || !userbankCodetoStore){
+
+                        response = "END missing  Bank code and account Number"
+                    }
+                    else{
+
+                  
                     try {
                         const userExist = await User.findOne({ where: { phoneNumber } });
                     
@@ -147,20 +272,117 @@ const ussdAccess = async (req, res) => {
                                 walletAddress: walletAddress,
                                 privateKey: encryptedKey,
                                 pin: passcode,
-                                status: true
+                                status: true,
+                                bankCode: userbankCodetoStore,
+                                accountNumber: userbankAccounttoStore
+                            });
+
+                            sendSMS(phoneNumber, messages.accountCreated(walletAddress))
+                            console.log('User record created in database');
+                        }
+                    } catch (error) {
+                        response = `END Error: ${error.message || "Unknown error"}`;
+                    }
+                      }
+           
+        }
+
+         if(array.length == 6 && array[3] == '6'){
+
+            response = "CON Enter Your 10 digit Account Number"               
+            }
+            if(array.length == 7 && array[3] == '6'){
+
+                let bankInitials = array[4]
+                let userbankCode = array[5] -1
+                let accountNumber = array[6]
+                let allbanks = await getListOfAllBanks()
+                let results = allbanks.filter((bank)=> bank.name.toLowerCase().startsWith(bankInitials.toLowerCase()));
+                let bankCode = results[userbankCode].code
+                userbankAccounttoStore = accountNumber
+                userbankCodetoStore = bankCode
+
+                try {
+                    let result = await ValidateUserAccountDetails(accountNumber, bankCode)
+                     if(result.status){
+                            let userAccountName = result.data.account_name;
+                            let userAccountNumber = result.data.account_number;
+                            response = `CON Confirm Account Details \n Name: ${userAccountName} \n Account Number: ${userAccountNumber}
+                             1.Confirm \n2.  Re-enter details
+                            `
+                     }
+                    
+                
+                } catch (error) {
+                    console.log("Error:", error)
+                    response = "END Could not validite account"
+                }
+              
+            
+        } 
+       
+        if(array.length == 8 && array[3] == '6' && array[7] == '1'){
+
+                    fullName = array[1]
+                    passcode = array[2]
+
+                     if(!userbankAccounttoStore || ! userbankCodetoStore){
+
+                                response = "END missing  Bank code and account Number"
+                    }
+                    else{
+                    try {
+                        const userExist = await User.findOne({ where: { phoneNumber } });
+                    
+                        console.log("existence of user", userExist)
+                    
+                        if (userExist) {
+                            response = "END You already have an account"; 
+                        } else {
+                            response = 'END Creating account, you will receive an SMS when complete';
+                            
+                            const wallet = ethers.Wallet.createRandom();
+
+                            const privateKey = wallet.privateKey;
+                            const walletAddress = wallet.address;
+
+                            const [firstHalf] = splitPK(privateKey);
+
+                            const encryptedKey = `${encryptKey(privateKey, firstHalf)}${firstHalf}`;
+
+                            const safiriUsername = await generateSafiriUsername(fullName);
+                            
+                           
+                            
+
+                            
+                            const user = await User.create({
+                                fullName,
+                                phoneNumber,
+                                safiriUsername: safiriUsername,
+                                walletAddress: walletAddress,
+                                privateKey: encryptedKey,
+                                pin: passcode,
+                                status: true,
+                                bankCode: userbankCodetoStore,
+                                accountNumber: userbankAccounttoStore
                             });
 
                             sendSMS(phoneNumber, messages.accountCreated(walletAddress))
                             console.log('User record created in database');
 
 
-                        }
+                        
+                    }
                     } catch (error) {
                         response = `END Error: ${error.message || "Unknown error"}`;
                     }
-                } 
-            }
+                }
+
         }
+    }
+
+        
 
         // Transfer option
         if(parseInt(array[0]) == 3) {
@@ -289,6 +511,73 @@ async function sendTransactionNotification(phoneNumber, success, details) {
         console.error('Failed to send transaction notification:', error);
     }
 }
+
+
+async function  paginateBanks(banks, currentPage, perPage=5) {
+
+    if(Array.isArray(banks)){
+    let start = (currentPage - 1) * perPage;
+    let end = perPage  +   start
+    let totalPage = Math.ceil(banks.length/ perPage)
+    let pageBanks= banks.slice(start, end);
+    return {
+    pageBanks,
+    totalPage
+    }
+    }
+}
+
+
+async function getListOfAllBanks() {
+  try {
+    const response = await fetch('https://api.paystack.co/bank', {
+      method: 'GET',
+      headers: {
+        Authorization: process.env.SECRET_KEY
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Paystack API error: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    const filter_data = result.data.map(bank => ({
+      code: bank.code,
+      name: bank.name
+    }));
+
+    return filter_data;
+
+  } catch (error) {
+    console.error('Error fetching banks:', error.message);
+    throw error;
+  }
+}
+
+
+async function ValidateUserAccountDetails(accountNumber, bankCode) {
+  const url = `https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`;
+
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: process.env.SECRET_KEY,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+    return data; 
+
+  } catch (error) {
+    return { error: 'Failed to resolve account', details: error.message };
+  }
+}
+
 
 module.exports = {
     ussdAccess,
