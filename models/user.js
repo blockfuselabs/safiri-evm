@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.hasMany(models.Transaction, { 
-        foreignKey: 'user_id', 
-        as: 'transactions', 
-        onDelete: 'CASCADE' 
+      User.hasMany(models.Transaction, {
+        foreignKey: 'user_id',
+        as: 'transactions',
+        onDelete: 'CASCADE'
       });
     }
   }
@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     safiriUsername: DataTypes.STRING,
-  //   safiriUsername: {
-  //     type: DataTypes.STRING,
-  //     unique: true,
-  //     allowNull: false
-  // },
-  
+    //   safiriUsername: {
+    //     type: DataTypes.STRING,
+    //     unique: true,
+    //     allowNull: false
+    // },
+
     fullName: DataTypes.STRING,
     safiriUsername: DataTypes.STRING,
     phoneNumber: DataTypes.STRING,
@@ -41,7 +41,13 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: DataTypes.DATE,
     bankCode: DataTypes.STRING,
     accountNumber: DataTypes.STRING,
-    accountName: DataTypes.STRING
+    accountName: DataTypes.STRING,
+
+
+    dob: DataTypes.STRING,           // Date of birth (e.g., "01/01/1990")
+    idNumber: DataTypes.STRING,      // ID number (e.g., BVN or NIN)
+    idType: DataTypes.STRING,        // e.g., "BVN", "NIN"
+    address: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',

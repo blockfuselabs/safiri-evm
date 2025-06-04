@@ -160,9 +160,9 @@ const ussdAccess = async (req, res) => {
                                 country: 'NG',
                                 phone: phoneNumber,
                                 address: 'NG',
-                                dob: '01/01/1990',
-                                idNumber: '00000000000',
-                                idType: 'BVN'
+                                dob: userExist.dob || '01/01/1990',
+                                idNumber: userExist.idNumber,
+                                idType: userExist.idType,
                             }
                         });
 
