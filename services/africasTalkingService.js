@@ -53,12 +53,18 @@ const ussdAccess = async (req, res) => {
    
     
     if(text == ''){
-        response = 'CON Welcome to Safiri Wallet \n 1. Create an account \n 2. Check wallet balance \n 3. Transfer'
+        response = 'CON Welcome to Safiri Wallet \n 1. Create an account \n 2. Check wallet balance \n 3. Transfer \n 4. Offramp'
     }
 
     else if(text == '1') {
         response = 'CON Enter full name ';
     }
+
+    else if(text == '4') {
+        response = 'CON Enter amount of crypto to offramp'
+        
+    }
+    
 
     else if(text == '2') {
         try {
@@ -110,6 +116,26 @@ const ussdAccess = async (req, res) => {
 
         if(array.length < 1) {
             response = 'END Invalid input';
+        }
+
+        // offramping implementation
+        if (parseInt(array[0]) == 4) {
+                const userExist = await User.findOne({ where: { phoneNumber } });
+
+                if (!userExist){
+                    response = 'END You do not have an account. Please create one';
+                } else {
+                    const tokenContract = await new ethers.Contract(USDT_CONTRACT_ADDRESS, ERC20_ABI, ethProvider);
+                    const userAddress = userExist.walletAddress;
+
+                    const userBalance = await tokenContract.balanceOf(userAddress);
+
+                    if (array[1] > userBalance) {
+                        response = 'END insufficient crypto bro'
+                    }
+
+                    console.log(parseInt(userBalance))
+                }
         }
         
         // Create account option
@@ -492,8 +518,12 @@ const ussdAccess = async (req, res) => {
                     response = 'END Could not process transfer';
                 }
             }
+            
         }
     }
+
+
+    
 
     res.set('Content-Type', 'text/plain');
     res.send(response);
