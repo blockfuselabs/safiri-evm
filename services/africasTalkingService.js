@@ -11,12 +11,14 @@ const { Op } = require('sequelize');
 const fs = require('fs');
 const { sendSMS, messages } = require('./smsService');
 const generateSafiriUsername  = require('../utils/usernameGeneration');
+const { quoteOut, transferOut } = require('./onerampService'); // <-- Add this import
 
 const africaStalking = africaStalkingData({
     apiKey: process.env.AFRICA_STALKING_API_KEY || "",
     username: process.env.AFRICA_STALKING_USERNAME || 'sandbox',
 });
 
+const matchedBanks = require("../utils/matchedBanks");
 // Configuration
 const provider = process.env.BASE_ETH_PROVIDER_URL || 'https://base-sepolia.g.alchemy.com/v2/9-PIwmEK19yyEu468y65gQSJEIjflXjA';
 
@@ -44,6 +46,7 @@ const USDT_CONTRACT_ADDRESS = process.env.USDT_CONTRACT_ADDRESS;
 let userbankAccounttoStore;
 let userbankCodetoStore;
 let userbankAccountName;
+let bankName;
 const ussdAccess = async (req, res) => {
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
 
@@ -82,7 +85,7 @@ const ussdAccess = async (req, res) => {
                     const userAddress = userExist.walletAddress;
         
                     const userBalance = await tokenContract.balanceOf(userAddress);
-                    response = `END Your wallet balance: ${Number(userBalance)} USDT`;
+                    response = `END Your wallet balance: ${(Number(userBalance) / 1000000)} USDC`;
 
                     sendSMS(phoneNumber, messages.accountBalance(userExist.walletAddress, Number(userBalance)));
                 }
@@ -135,7 +138,95 @@ const ussdAccess = async (req, res) => {
                         response = 'END insufficient crypto bro'
                     }
 
-                    console.log(parseInt(userBalance))
+                    console.log(`Your wallet balance is ${parseInt(userBalance)}`);
+
+            // Step 1: Get quote and ask for confirmation
+            if (array.length === 2) {
+                const cryptoAmount = array[1];
+                // Get quote from OneRamp
+                const quote = await quoteOut('NGN', 'USDC', cryptoAmount, userExist.walletAddress);
+                console.log(`Quote response: ${JSON.stringify(quote)}`);
+                if (!quote.status) {
+                    response = `END Failed to get quote: ${quote.error}`;
+                } else {
+                    // Store quoteId and amount temporarily on user (for demo; use cache/session in prod)
+                    userExist.lastQuoteId = quote.quoteId;
+                    userExist.lastCryptoAmount = cryptoAmount;
+                    await userExist.save();
+
+                    response = `CON You will receive ~${Number(quote.fiatAmount).toFixed(2)} NGN for ${cryptoAmount} USDT (fee: ${quote.fee}).\n1. Confirm\n2. Cancel`;
+                }
+            } 
+        // Step 2: Confirm and send USDT, then initiate fiat payout
+        else if (array.length === 3 && array[2] === '1') {
+            // Retrieve quoteId and amount
+            const quoteId = userExist.lastQuoteId;
+            const cryptoAmount = userExist.lastCryptoAmount;
+            if (!quoteId || !cryptoAmount) {
+                response = 'END Session expired. Please start again.';
+            } else {
+                try {
+                    // Send USDT to provider wallet
+                    const privateKey = decryptKey(userExist.privateKey);
+                    const userWallet = new ethers.Wallet(privateKey, ethProvider);
+                    const tokenContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, ERC20_ABI, userWallet);
+
+                    const bankCode = matchedBanks[userExist.bankName].code;
+
+                    // Initiate fiat payout
+                    const bankDetails = {
+                        code: bankCode,
+                        accountNumber: userExist.accountNumber,
+                        accountName: userExist.fullName
+                    };
+                    // Dummy KYC for demo; collect real KYC in production
+
+                    //TODO: remove hardcoded info
+                    const userDetails = {
+                        name: userExist.fullName,
+                        country: 'NG',
+                        address: 'N/A',
+                        phone: userExist.phoneNumber,
+                        dob: '1990-01-01',
+                        idNumber: '01010101',
+                        idType: 'NIN',
+                        additionalIdType: "BVN",
+                        additionalIdNumber: "CM55677878678"
+                    };
+                    const transfer = await transferOut(quoteId, bankDetails, userDetails);
+
+                    if (!transfer.status) {
+                        response = `END Transfer failed: ${transfer.error}`;
+                    } else {
+                        response = 'END Offramp initiated. You will receive your funds soon.';
+                        
+                        try {
+                            const tx = await tokenContract.transfer(transfer.transferAddress, cryptoAmount, { gasLimit: 300000 });
+                            await tx.wait();
+                            sendSMS(phoneNumber, `Your offramp is processing. Transfer ID: ${transfer.transferId}`);
+                        } catch (err) {
+                            if (
+                                (err.code === 'INSUFFICIENT_FUNDS') ||
+                                (err.info && err.info.error && err.info.error.message && err.info.error.message.includes('insufficient funds')) ||
+                                (err.shortMessage && err.shortMessage.toLowerCase().includes('insufficient funds'))
+                            ) {
+                                response = 'END Insufficient funds to pay for gas. Please fund your wallet with ETH for gas fees.';
+                            } else {
+                                response = 'END Error sending USDT or initiating payout.';
+                                console.error(err);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    response = 'END Error sending USDT or initiating payout.';
+                    console.error(error);
+                }
+            }
+        } 
+        // Step 3: Cancel offramp
+        else if (array.length === 3 && array[2] === '2') {
+            response = 'END Offramp cancelled.';
+        }
                 }
         }
         
@@ -330,6 +421,8 @@ const ussdAccess = async (req, res) => {
                 let bankCode = results[userbankCode].code
                 userbankAccounttoStore = accountNumber
                 userbankCodetoStore = bankCode
+                bankName = results[userbankCode].name;
+
 
                 try {
                     let result = await ValidateUserAccountDetails(accountNumber, bankCode)
@@ -396,7 +489,8 @@ const ussdAccess = async (req, res) => {
                                 status: true,
                                 bankCode: userbankCodetoStore,
                                 accountNumber: userbankAccounttoStore,
-                                accountName:userbankAccountName
+                                accountName:userbankAccountName,
+                                bankName: bankName
                             });
 
                             sendSMS(phoneNumber, messages.accountCreated(walletAddress))
@@ -612,6 +706,7 @@ async function ValidateUserAccountDetails(accountNumber, bankCode) {
     return { error: 'Failed to resolve account', details: error.message };
   }
 }
+
 
 
 module.exports = {
