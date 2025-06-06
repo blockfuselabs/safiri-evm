@@ -265,6 +265,8 @@ const ussdAccess = async (req, res) => {
                     userBankChoice = array[3]
                     console.log(userBankChoice)
                     if (userBankChoice >=1 && userBankChoice <=5){
+                        bankName=pageBanks[userBankChoice - 1].name
+                        console.log("I am the bank name", bankName)
                         //GET BANK CODE AND THEN VALIDATE ACCOUNT
                         response = "CON Enter Account Number"
                     }
@@ -295,11 +297,13 @@ const ussdAccess = async (req, res) => {
                             
                         let result = await ValidateUserAccountDetails(userAccountNumber, userbankCode)
 
+                        console.log("Bank details", result)
                         if(result.status){
                             let userAccountName = result.data.account_name;
                             let userAccountNumber = result.data.account_number;
                             userbankAccounttoStore = userAccountNumber;
                             userbankAccountName = userAccountName;
+                            
                             response = `CON Please Confirm your  Details\n 
                             Name:\b
                             ${userAccountName}\b
@@ -394,7 +398,8 @@ const ussdAccess = async (req, res) => {
                                 status: true,
                                 bankCode: userbankCodetoStore,
                                 accountNumber: userbankAccounttoStore,
-                                accountName: userbankAccountName
+                                accountName: userbankAccountName,
+                                bankName:bankName
                             });
 
                             sendSMS(phoneNumber, messages.accountCreated(walletAddress))
@@ -408,17 +413,20 @@ const ussdAccess = async (req, res) => {
         }
 
          if(array.length == 6 && array[3] == '6'){
-
+            console.log()
             response = "CON Enter Your 10 digit Account Number"               
             }
             if(array.length == 7 && array[3] == '6'){
 
                 let bankInitials = array[4]
-                let userbankCode = array[5] -1
+                let userbankCode = array[5] - 1
                 let accountNumber = array[6]
+                // Calling this method again to get bank code for the bank to store
                 let allbanks = await getListOfAllBanks()
+                
                 let results = allbanks.filter((bank)=> bank.name.toLowerCase().startsWith(bankInitials.toLowerCase()));
                 let bankCode = results[userbankCode].code
+                //
                 userbankAccounttoStore = accountNumber
                 userbankCodetoStore = bankCode
                 bankName = results[userbankCode].name;
