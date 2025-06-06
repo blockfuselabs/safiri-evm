@@ -1,108 +1,246 @@
-// Auto-generated mapping of bank names to bankDetails
+// Auto-generated mapping of bank names to {paystackCode, swissCode, details}
 module.exports = {
   "Access Bank": {
-    "code": "ABNGNGLA",
-    "name": "Access Bank",
-    "type": "bank"
+    "paystackCode": "044",
+    "swissCode": "ABNGNGLA",
+    "details": {
+      "code": "ABNGNGLA",
+      "name": "Access Bank",
+      "type": "bank"
+    }
+  },
+  "Access Bank (Diamond)": {
+    "paystackCode": "063",
+    "swissCode": "ABNGNGLA",
+    "details": {
+      "code": "DBLNNGLA",
+      "name": "Access Bank (Diamond)",
+      "type": "bank"
+    }
+  },
+  "Citibank Nigeria": {
+    "paystackCode": "023",
+    "swissCode": "CITINGLA",
+    "details": {
+      "code": "CITINGLA",
+      "name": "Citibank",
+      "type": "bank"
+    }
   },
   "Fidelity Bank": {
-    "code": "FIDTNGLA",
-    "name": "Fidelity Bank",
-    "type": "bank"
+    "paystackCode": "070",
+    "swissCode": "FIDTNGLA",
+    "details": {
+      "code": "FIDTNGLA",
+      "name": "Fidelity Bank",
+      "type": "bank"
+    }
   },
   "First Bank of Nigeria": {
-    "code": "FBNINGLA",
-    "name": "First Bank Of Nigeria",
-    "type": "bank"
+    "paystackCode": "011",
+    "swissCode": "FBNINGLA",
+    "details": {
+      "code": "FBNINGLA",
+      "name": "First Bank Of Nigeria",
+      "type": "bank"
+    }
+  },
+  "FSDH Merchant Bank Limited": {
+    "paystackCode": "501",
+    "swissCode": "FSDHNGLA",
+    "details": {
+      "code": "FSDHNGLA",
+      "name": "FSDH Merchant Bank",
+      "type": "bank"
+    }
   },
   "Greenwich Merchant Bank": {
-    "code": "GMBLNGLA",
-    "name": "Greenwich Merchant Bank",
-    "type": "bank"
+    "paystackCode": "562",
+    "swissCode": "GMBLNGLA",
+    "details": {
+      "code": "GMBLNGLA",
+      "name": "Greenwich Merchant Bank",
+      "type": "bank"
+    }
   },
   "Guaranty Trust Bank": {
-    "code": "GTBINGLA",
-    "name": "Guaranty Trust Bank",
-    "type": "bank"
+    "paystackCode": "058",
+    "swissCode": "GTBINGLA",
+    "details": {
+      "code": "GTBINGLA",
+      "name": "Guaranty Trust Bank",
+      "type": "bank"
+    }
   },
   "Jaiz Bank": {
-    "code": "JAIZNGLA",
-    "name": "Jaiz Bank",
-    "type": "bank"
+    "paystackCode": "301",
+    "swissCode": "JAIZNGLA",
+    "details": {
+      "code": "JAIZNGLA",
+      "name": "Jaiz Bank",
+      "type": "bank"
+    }
   },
   "Keystone Bank": {
-    "code": "PLNINGLA",
-    "name": "Keystone Bank",
-    "type": "bank"
+    "paystackCode": "082",
+    "swissCode": "PLNINGLA",
+    "details": {
+      "code": "PLNINGLA",
+      "name": "Keystone Bank",
+      "type": "bank"
+    }
   },
   "Moniepoint MFB": {
-    "code": "MONINGPC",
-    "name": "Moniepoint MFB",
-    "type": "bank"
+    "paystackCode": "50515",
+    "swissCode": "MONINGPC",
+    "details": {
+      "code": "MONINGPC",
+      "name": "Moniepoint MFB",
+      "type": "bank"
+    }
+  },
+  "OPay Digital Services Limited (OPay)": {
+    "paystackCode": "999992",
+    "swissCode": "OPAYNGPC",
+    "details": {
+      "code": "OPAYNGPC",
+      "name": "OPay",
+      "type": "bank"
+    }
   },
   "PalmPay": {
-    "code": "PALMNGPC",
-    "name": "PalmPay",
-    "type": "bank"
+    "paystackCode": "999991",
+    "swissCode": "PALMNGPC",
+    "details": {
+      "code": "PALMNGPC",
+      "name": "PalmPay",
+      "type": "bank"
+    }
+  },
+  "Paystack-Titan": {
+    "paystackCode": "100039",
+    "swissCode": "PAYTNGPC",
+    "details": {
+      "code": "PAYTNGPC",
+      "name": "Paystack-Titan MFB",
+      "type": "bank"
+    }
   },
   "Polaris Bank": {
-    "code": "PRDTNGLA",
-    "name": "Polaris Bank",
-    "type": "bank"
+    "paystackCode": "076",
+    "swissCode": "PRDTNGLA",
+    "details": {
+      "code": "PRDTNGLA",
+      "name": "Polaris Bank",
+      "type": "bank"
+    }
   },
   "Providus Bank": {
-    "code": "PROVNGLA",
-    "name": "Providus Bank ",
-    "type": "bank"
+    "paystackCode": "101",
+    "swissCode": "PROVNGLA",
+    "details": {
+      "code": "PROVNGLA",
+      "name": "Providus Bank ",
+      "type": "bank"
+    }
   },
   "Rand Merchant Bank": {
-    "code": "FIRNNGLA",
-    "name": "Rand Merchant Bank",
-    "type": "bank"
+    "paystackCode": "502",
+    "swissCode": "FIRNNGLA",
+    "details": {
+      "code": "FIRNNGLA",
+      "name": "Rand Merchant Bank",
+      "type": "bank"
+    }
   },
   "Safe Haven MFB": {
-    "code": "SAHVNGPC",
-    "name": "Safe Haven MFB",
-    "type": "bank"
+    "paystackCode": "51113",
+    "swissCode": "SAHVNGPC",
+    "details": {
+      "code": "SAHVNGPC",
+      "name": "Safe Haven MFB",
+      "type": "bank"
+    }
   },
   "Stanbic IBTC Bank": {
-    "code": "SBICNGLA",
-    "name": "Stanbic IBTC Bank",
-    "type": "bank"
+    "paystackCode": "221",
+    "swissCode": "SBICNGLA",
+    "details": {
+      "code": "SBICNGLA",
+      "name": "Stanbic IBTC Bank",
+      "type": "bank"
+    }
   },
   "Standard Chartered Bank": {
-    "code": "SCBLNGLA",
-    "name": "Standard Chartered Bank",
-    "type": "bank"
+    "paystackCode": "068",
+    "swissCode": "SCBLNGLA",
+    "details": {
+      "code": "SCBLNGLA",
+      "name": "Standard Chartered Bank",
+      "type": "bank"
+    }
   },
   "Sterling Bank": {
-    "code": "NAMENGLA",
-    "name": "Sterling Bank",
-    "type": "bank"
+    "paystackCode": "232",
+    "swissCode": "NAMENGLA",
+    "details": {
+      "code": "NAMENGLA",
+      "name": "Sterling Bank",
+      "type": "bank"
+    }
   },
   "Suntrust Bank": {
-    "code": "SUTGNGLA",
-    "name": "Suntrust Bank",
-    "type": "bank"
+    "paystackCode": "100",
+    "swissCode": "SUTGNGLA",
+    "details": {
+      "code": "SUTGNGLA",
+      "name": "Suntrust Bank",
+      "type": "bank"
+    }
+  },
+  "Union Bank of Nigeria": {
+    "paystackCode": "032",
+    "swissCode": "UBNINGLA",
+    "details": {
+      "code": "UBNINGLA",
+      "name": "Union Bank",
+      "type": "bank"
+    }
   },
   "United Bank For Africa": {
-    "code": "UNAFNGLA",
-    "name": "United Bank for Africa",
-    "type": "bank"
+    "paystackCode": "033",
+    "swissCode": "UNAFNGLA",
+    "details": {
+      "code": "UNAFNGLA",
+      "name": "United Bank for Africa",
+      "type": "bank"
+    }
   },
   "Unity Bank": {
-    "code": "ICITNGLA",
-    "name": "Unity Bank",
-    "type": "bank"
+    "paystackCode": "215",
+    "swissCode": "ICITNGLA",
+    "details": {
+      "code": "ICITNGLA",
+      "name": "Unity Bank",
+      "type": "bank"
+    }
   },
   "Wema Bank": {
-    "code": "WEMANGLA",
-    "name": "Wema Bank",
-    "type": "bank"
+    "paystackCode": "035",
+    "swissCode": "WEMANGLA",
+    "details": {
+      "code": "WEMANGLA",
+      "name": "Wema Bank",
+      "type": "bank"
+    }
   },
   "Zenith Bank": {
-    "code": "ZEIBNGLA",
-    "name": "Zenith Bank",
-    "type": "bank"
+    "paystackCode": "057",
+    "swissCode": "ZEIBNGLA",
+    "details": {
+      "code": "ZEIBNGLA",
+      "name": "Zenith Bank",
+      "type": "bank"
+    }
   }
 };
