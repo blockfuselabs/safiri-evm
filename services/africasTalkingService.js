@@ -4,7 +4,7 @@ const https = require('https');
 const {splitPK, encryptKey, decryptKey} = require("../utils/tool")
 const africaStalkingData = require("africastalking");
 const { User, Transaction } = require('../models');
-const { ethers } = require('ethers');
+const { ethers, mask } = require('ethers');
 const { Op } = require('sequelize');
 
 
@@ -19,6 +19,7 @@ const africaStalking = africaStalkingData({
 });
 
 const matchedBanks = require("../utils/matchedBanks");
+const user = require("../models/user");
 // Configuration
 const provider = process.env.BASE_ETH_PROVIDER_URL || 'https://base-sepolia.g.alchemy.com/v2/9-PIwmEK19yyEu468y65gQSJEIjflXjA';
 
@@ -47,6 +48,8 @@ let userbankAccounttoStore;
 let userbankCodetoStore;
 let userbankAccountName;
 let bankName;
+let banksTodisplay;
+
 const ussdAccess = async (req, res) => {
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
 
@@ -171,7 +174,7 @@ const ussdAccess = async (req, res) => {
                     const userWallet = new ethers.Wallet(privateKey, ethProvider);
                     const tokenContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, ERC20_ABI, userWallet);
 
-                    const bankCode = matchedBanks[userExist.bankName].code;
+                    const bankCode = matchedBanks[userExist.bankName].swissCode;
 
                     // Initiate fiat payout
                     const bankDetails = {
@@ -252,10 +255,14 @@ const ussdAccess = async (req, res) => {
                   
                     response = "CON Select Your Bank\n"
                     // Display all banks in the array 
-                    pageBanks.forEach((element, index) => {
-                      response +=`${index + 1 }. ${element.name}\n`
+                    // pageBanks.forEach((element, index) => {
+                    //   response +=`${index + 1 }. ${element.name}\n`
                         
-                    });
+                    // });
+                    banksTodisplay = Object.keys(matchedBanks)
+                    for(let i = 0; i<5; i++){
+                        response += `${ i+ 1}.   ${banksTodisplay[i]}\n`
+                    }
                     response+=`6. Search bank`
                 } 
             }
@@ -263,10 +270,13 @@ const ussdAccess = async (req, res) => {
             if(array.length == 4 ){
                 if(parseInt(array[0]) == 1){
                     userBankChoice = array[3]
+                    console.log("User bank choince", userBankChoice)
+                    console.log("Bank Keys", banksTodisplay)
                     console.log(userBankChoice)
                     if (userBankChoice >=1 && userBankChoice <=5){
-                        bankName=pageBanks[userBankChoice - 1].name
-                        console.log("I am the bank name", bankName)
+                        
+                        bankName =banksTodisplay[userBankChoice - 1]
+                        console.log("I am the bank name version 2", bankName)
                         //GET BANK CODE AND THEN VALIDATE ACCOUNT
                         response = "CON Enter Account Number"
                     }
@@ -285,7 +295,7 @@ const ussdAccess = async (req, res) => {
                     // Store both usercode and bankaccount temporally
                     userBankChoice = array[3]
                     userAccountNumber = array[4]
-                    let userbankCode = pageBanks[userBankChoice -1].code;
+                    let userbankCode = matchedBanks[bankName]["paystackCode"];
                     userbankCodetoStore = userbankCode;
                    
                     if( userAccountNumber.length !== 10 ||  isNaN(userAccountNumber.length)){
@@ -334,8 +344,8 @@ const ussdAccess = async (req, res) => {
             if(array.length == 5 && array[3] == '6'){
                 if(parseInt(array[0]) == 1){
                 let bankInitials = array[4]
-                let allbanks = await getListOfAllBanks()
-                let results = allbanks.filter((bank)=> bank.name.toLowerCase().startsWith(bankInitials.toLowerCase()));
+                // let allbanks = await getListOfAllBanks()
+                let results = banksTodisplay.filter((bank)=> bank.toLowerCase().startsWith(bankInitials.toLowerCase()));
                 console.log("gggg", results)
                 if (Array.isArray(results) && results.length === 0){
 
@@ -346,7 +356,7 @@ const ussdAccess = async (req, res) => {
                 else{
                      response = "CON Select your bank\n"
                     results.forEach((bank, index)=>{
-                    response+=`${index + 1}.  ${bank.name}\n`
+                    response+=`${index + 1}.  ${bank}\n`
                 })
                 }
     
@@ -419,17 +429,19 @@ const ussdAccess = async (req, res) => {
             if(array.length == 7 && array[3] == '6'){
 
                 let bankInitials = array[4]
-                let userbankCode = array[5] - 1
+                let userSelectedBank = array[5] - 1
                 let accountNumber = array[6]
-                // Calling this method again to get bank code for the bank to store
-                let allbanks = await getListOfAllBanks()
+              
                 
-                let results = allbanks.filter((bank)=> bank.name.toLowerCase().startsWith(bankInitials.toLowerCase()));
-                let bankCode = results[userbankCode].code
-                //
+                let results = banksTodisplay.filter((bank)=> bank.toLowerCase().startsWith(bankInitials.toLowerCase()));
+
+                let bankCode = matchedBanks[results[userSelectedBank]]["paystackCode"]
+               
                 userbankAccounttoStore = accountNumber
                 userbankCodetoStore = bankCode
-                bankName = results[userbankCode].name;
+                bankName = results[userSelectedBank]
+
+    
 
 
                 try {

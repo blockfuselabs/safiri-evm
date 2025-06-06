@@ -9,12 +9,48 @@ module.exports = {
       "type": "bank"
     }
   },
-  "Access Bank (Diamond)": {
-    "paystackCode": "063",
-    "swissCode": "ABNGNGLA",
+  "First Bank of Nigeria": {
+    "paystackCode": "011",
+    "swissCode": "FBNINGLA",
     "details": {
-      "code": "DBLNNGLA",
-      "name": "Access Bank (Diamond)",
+      "code": "FBNINGLA",
+      "name": "First Bank Of Nigeria",
+      "type": "bank"
+    }
+  },
+  "United Bank For Africa": {
+    "paystackCode": "033",
+    "swissCode": "UNAFNGLA",
+    "details": {
+      "code": "UNAFNGLA",
+      "name": "United Bank for Africa",
+      "type": "bank"
+    }
+  },
+  "OPay Digital Services Limited (OPay)": {
+    "paystackCode": "999992",
+    "swissCode": "OPAYNGPC",
+    "details": {
+      "code": "OPAYNGPC",
+      "name": "OPay",
+      "type": "bank"
+    }
+  },
+  "PalmPay": {
+    "paystackCode": "999991",
+    "swissCode": "PALMNGPC",
+    "details": {
+      "code": "PALMNGPC",
+      "name": "PalmPay",
+      "type": "bank"
+    }
+  },
+  "Moniepoint MFB": {
+    "paystackCode": "50515",
+    "swissCode": "MONINGPC",
+    "details": {
+      "code": "MONINGPC",
+      "name": "Moniepoint MFB",
       "type": "bank"
     }
   },
@@ -33,15 +69,6 @@ module.exports = {
     "details": {
       "code": "FIDTNGLA",
       "name": "Fidelity Bank",
-      "type": "bank"
-    }
-  },
-  "First Bank of Nigeria": {
-    "paystackCode": "011",
-    "swissCode": "FBNINGLA",
-    "details": {
-      "code": "FBNINGLA",
-      "name": "First Bank Of Nigeria",
       "type": "bank"
     }
   },
@@ -87,33 +114,6 @@ module.exports = {
     "details": {
       "code": "PLNINGLA",
       "name": "Keystone Bank",
-      "type": "bank"
-    }
-  },
-  "Moniepoint MFB": {
-    "paystackCode": "50515",
-    "swissCode": "MONINGPC",
-    "details": {
-      "code": "MONINGPC",
-      "name": "Moniepoint MFB",
-      "type": "bank"
-    }
-  },
-  "OPay Digital Services Limited (OPay)": {
-    "paystackCode": "999992",
-    "swissCode": "OPAYNGPC",
-    "details": {
-      "code": "OPAYNGPC",
-      "name": "OPay",
-      "type": "bank"
-    }
-  },
-  "PalmPay": {
-    "paystackCode": "999991",
-    "swissCode": "PALMNGPC",
-    "details": {
-      "code": "PALMNGPC",
-      "name": "PalmPay",
       "type": "bank"
     }
   },
@@ -198,21 +198,21 @@ module.exports = {
       "type": "bank"
     }
   },
+    "Access Bank (Diamond)": {
+    "paystackCode": "063",
+    "swissCode": "ABNGNGLA",
+    "details": {
+      "code": "DBLNNGLA",
+      "name": "Access Bank (Diamond)",
+      "type": "bank"
+    }
+  },
   "Union Bank of Nigeria": {
     "paystackCode": "032",
     "swissCode": "UBNINGLA",
     "details": {
       "code": "UBNINGLA",
       "name": "Union Bank",
-      "type": "bank"
-    }
-  },
-  "United Bank For Africa": {
-    "paystackCode": "033",
-    "swissCode": "UNAFNGLA",
-    "details": {
-      "code": "UNAFNGLA",
-      "name": "United Bank for Africa",
       "type": "bank"
     }
   },
