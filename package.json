@@ -22,6 +22,7 @@
   "homepage": "https://github.com/shaaibu7/FundX#readme",
   "dependencies": {
     "africastalking": "^0.7.3",
+    "axios": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "ethers": "^6.13.7",
@@ -29,6 +30,7 @@
     "https": "^1.0.0",
     "mysql2": "^3.14.1",
     "node-fetch": "^2.7.0",
+    "pg": "^8.16.0",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {

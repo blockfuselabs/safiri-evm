@@ -40,8 +40,11 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
     bankCode: DataTypes.STRING,
+    bankName: DataTypes.STRING,
     accountNumber: DataTypes.STRING,
-    accountName: DataTypes.STRING
+    accountName: DataTypes.STRING,
+    lastQuoteId: DataTypes.STRING,
+    lastCryptoAmount: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'User',
