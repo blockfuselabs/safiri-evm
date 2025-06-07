@@ -127,6 +127,7 @@ const ussdAccess = async (req, res) => {
 
         // offramping implementation
         if (parseInt(array[0]) == 4) {
+            let flag = false
                 const userExist = await User.findOne({ where: { phoneNumber } });
 
                 if (!userExist){
@@ -142,6 +143,7 @@ const ussdAccess = async (req, res) => {
                     let offrampAmount = Number(array[1]);
 
                     if (userBalanceTransform < offrampAmount) {
+                        flag = true
                         console.log("logging insufficiency here")
                         response = `END insufficient crypto to offramp`;
                         console.log("The updated value of response",response)
@@ -151,7 +153,7 @@ const ussdAccess = async (req, res) => {
                     
 
             // Step 1: Get quote and ask for confirmation
-            if (array.length === 2) {
+            if (array.length === 2 && !flag) {
                 const cryptoAmount = array[1];
                 // Get quote from OneRamp
                 const quote = await quoteOut('NGN', 'USDC', cryptoAmount, userExist.walletAddress);
