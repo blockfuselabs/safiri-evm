@@ -213,7 +213,7 @@ const ussdAccess = async (req, res) => {
                         response = 'END Offramp initiated. You will receive your funds soon.';
                         
                         try {
-                            const tx = await tokenContract.transfer(transfer.transferAddress, cryptoAmount, { gasLimit: 300000 });
+                            const tx = await tokenContract.transfer(transfer.transferAddress, cryptoAmount * 1000000, { gasLimit: 300000 });
                             await tx.wait();
                             sendSMS(phoneNumber, `Your offramp is processing. Transfer ID: ${transfer.transferId}`);
                         } catch (err) {
@@ -620,7 +620,7 @@ const ussdAccess = async (req, res) => {
                             response = 'END USDT balance insufficient';
                         }
 
-                        const transfer = await tokenContract.transfer(recipient.walletAddress, amount, {
+                        const transfer = await tokenContract.transfer(recipient.walletAddress, amount * 1000000, {
                             gasLimit: 300000,
                         });
                         await transfer.wait();
