@@ -136,12 +136,19 @@ const ussdAccess = async (req, res) => {
                     const userAddress = userExist.walletAddress;
 
                     const userBalance = await tokenContract.balanceOf(userAddress);
+                    console.log("user balance logging here and array", Number(userBalance), Number(array[1]))
 
-                    if (array[1] > userBalance) {
-                        response = 'END insufficient crypto bro'
+                    let userBalanceTransform = Number(userBalance);
+                    let offrampAmount = Number(array[1]);
+
+                    if (userBalanceTransform < offrampAmount) {
+                        console.log("logging insufficiency here")
+                        response = `END insufficient crypto to offramp`;
+                        console.log("The updated value of response",response)
                     }
 
                     console.log(`Your wallet balance is ${parseInt(userBalance)}`);
+                    
 
             // Step 1: Get quote and ask for confirmation
             if (array.length === 2) {
@@ -230,7 +237,7 @@ const ussdAccess = async (req, res) => {
         else if (array.length === 3 && array[2] === '2') {
             response = 'END Offramp cancelled.';
         }
-                }
+            }
         }
         
         // Create account option
